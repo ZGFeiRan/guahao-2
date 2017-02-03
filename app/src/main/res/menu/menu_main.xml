@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_fav_doctorlist" android:title="@string/action_fav_doctorlist"
+        android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_fav_hpid_ksid" android:title="@string/action_fav_hpid_ksid"
+        android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_open_fav_hpid_ksid" android:title="@string/action_open_fav_hpid_ksid"
+        android:orderInCategory="100" android:showAsAction="never" />
+</menu>

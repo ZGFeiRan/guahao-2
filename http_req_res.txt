@@ -1,0 +1,274 @@
+获取短信验证码
+Accept : application / json, text / javascript,  * /*; q=0.01
+Accept-Encoding:gzip, deflate
+Accept-Language:zh-CN,zh;q=0.8,en;q=0.6
+Connection:keep-alive
+Content-Length:0
+Content-Type:application/x-www-form-urlencoded; charset=UTF-8
+Cookie:SESSION_COOKIE=3cab1829cea36adbceb47f7e; JSESSIONID=9C4139C1E9F41902D891DED14749E26E; Hm_lvt_bc7eaca5ef5a22b54dd6ca44a23988fa=1485653788; Hm_lpvt_bc7eaca5ef5a22b54dd6ca44a23988fa=1485675810
+Host:m.bjguahao.gov.cn
+Origin:http://m.bjguahao.gov.cn
+Referer:http://m.bjguahao.gov.cn/order/confirm/12-200004202-200911282-42506300.htm
+User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36
+X-Requested-With:XMLHttpRequest
+
+Request URL:http://m.bjguahao.gov.cn/v/sendorder.htm
+Request Method:POST
+Status Code:200 OK
+Remote Address:61.50.244.167:80
+
+<p><input type="radio" name="hzr" value="217170114" checked="checked"> 李涛 | 5xx60219xxxx1000xx</p>
+
+预约成功返回:
+{
+	"data" : [{
+			"hospitalName" : "北京大学第一医院",
+			"departmentName" : "骨科",
+			"patientName" : "李涛",
+			"idTypeName" : "身份证",
+			"patientIdNo" : "5xx60219xxxx1000xx",
+			"recognitionCode" : "75102687",
+			"dutyDate" : "2017-02-06",
+			"ampm" : "下午",
+			"offerTime" : "当日下午13:30-14:30,如果遇特殊情况不能准时到达，请联系医院：大门诊83572215,妇儿门诊83573221",
+			"offerAddress" : "北大医院挂号窗口取号(地址：平安大街厂桥)",
+			"numericalSequence" : "1",
+			"temporalSequence" : "",
+			"needTs" : true,
+			"needNs" : true
+		}
+	],
+	"hasError" : false,
+	"code" : 200,
+	"msg" : "OK"
+}
+
+http://m.bjguahao.gov.cn/dpt/partduty.htm response
+{
+	"data" : [{
+			"dutySourceId" : 42530994,
+			"portrait" : null,
+			"doctorName" : "主治医师",
+			"doctorTitleName" : null,
+			"skill" : "",
+			"totalFee" : 5.0,
+			"remainAvailableNumber" : 17,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200911282",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530646,
+			"portrait" : null,
+			"doctorName" : "李军",
+			"doctorTitleName" : "副主任医师",
+			"skill" : "骨关节疾病、人工关节置换、创伤",
+			"totalFee" : 7.0,
+			"remainAvailableNumber" : 0,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910268",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530946,
+			"portrait" : null,
+			"doctorName" : "于峥嵘",
+			"doctorTitleName" : "副主任医师",
+			"skill" : "颈腰椎疾病微创治疗、胸腰椎骨折、脊柱畸形、骨质疏松",
+			"totalFee" : 7.0,
+			"remainAvailableNumber" : 2,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200911180",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530698,
+			"portrait" : null,
+			"doctorName" : "李宏",
+			"doctorTitleName" : "副主任医师",
+			"skill" : "脊柱疾患、脊髓及四肢创伤、骨质疏松",
+			"totalFee" : 7.0,
+			"remainAvailableNumber" : 2,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910352",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530966,
+			"portrait" : null,
+			"doctorName" : "孙浩林",
+			"doctorTitleName" : "副主任医师",
+			"skill" : "颈腰椎疾病微创治疗、脊柱侧弯后凸畸形、骨质疏松",
+			"totalFee" : 7.0,
+			"remainAvailableNumber" : 1,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200911234",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530578,
+			"portrait" : null,
+			"doctorName" : "曹永平",
+			"doctorTitleName" : "主任医师",
+			"skill" : "骨关节病、运动损伤和股骨头坏死的诊治",
+			"totalFee" : 14.0,
+			"remainAvailableNumber" : 0,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910184",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530606,
+			"portrait" : null,
+			"doctorName" : "米川",
+			"doctorTitleName" : "主任医师",
+			"skill" : "骨与软组织肿瘤、脊柱疾患、骨质疏松",
+			"totalFee" : 14.0,
+			"remainAvailableNumber" : 1,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910212",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530674,
+			"portrait" : null,
+			"doctorName" : "严尚诚",
+			"doctorTitleName" : "教授",
+			"skill" : "全项（关节脊柱肿瘤）",
+			"totalFee" : 14.0,
+			"remainAvailableNumber" : 1,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910328",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530710,
+			"portrait" : null,
+			"doctorName" : "柴卫兵",
+			"doctorTitleName" : "主任医师",
+			"skill" : "骨关节病人工关节置换",
+			"totalFee" : 14.0,
+			"remainAvailableNumber" : 1,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910472",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530486,
+			"portrait" : null,
+			"doctorName" : "林景荣",
+			"doctorTitleName" : "主任医师",
+			"skill" : "脊柱骨质疏松椎管狭窄",
+			"totalFee" : 14.0,
+			"remainAvailableNumber" : 0,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910044",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42531320,
+			"portrait" : "",
+			"doctorName" : "刘洪",
+			"doctorTitleName" : "主任医师",
+			"skill" : "颈椎病、腰椎管狭窄、椎间盘突出、侧弯矫形",
+			"totalFee" : 14.0,
+			"remainAvailableNumber" : 0,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "201119590",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42530814,
+			"portrait" : null,
+			"doctorName" : "朱天岳",
+			"doctorTitleName" : "教授",
+			"skill" : "骨关节疾病、人工关节置换",
+			"totalFee" : 14.0,
+			"remainAvailableNumber" : 1,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200910908",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}, {
+			"dutySourceId" : 42531114,
+			"portrait" : null,
+			"doctorName" : "李淳德",
+			"doctorTitleName" : "主任医师",
+			"skill" : "脊柱退变性疾病脊柱畸形脊柱创伤",
+			"totalFee" : 300.0,
+			"remainAvailableNumber" : 1,
+			"dutySourceStatus" : 1,
+			"hospitalId" : 12,
+			"departmentId" : "200004202",
+			"doctorId" : "200911492",
+			"drCode" : null,
+			"planCode" : null,
+			"dutyDate" : null,
+			"dutyCode" : null,
+			"departmentName" : null
+		}
+	],
+	"hasError" : false,
+	"code" : 200,
+	"msg" : "OK"
+}

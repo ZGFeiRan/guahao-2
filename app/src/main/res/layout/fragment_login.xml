@@ -1,0 +1,93 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tianxing.userapps.guahao5.LoginFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:text="name/phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewName"
+        android:layout_gravity="left|top" />
+
+    <AutoCompleteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/editTextName"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textViewIDCard"
+        android:layout_above="@+id/editTextIDCard"
+        android:layout_alignRight="@+id/editTextIDCard"
+        android:layout_alignEnd="@+id/editTextIDCard"
+        android:layout_gravity="right|top" />
+
+    <TextView
+        android:text="IDCard/pwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewIDCard"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="14dp"
+        android:layout_gravity="left|center_vertical" />
+
+    <AutoCompleteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextIDCard"
+        android:singleLine="true"
+        android:layout_below="@+id/imageViewLoginCode"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/editTextIDCard"
+        android:layout_toLeftOf="@+id/editTextIDCard"
+        android:ems="10"
+        android:layout_gravity="right|center_vertical" />
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/imageViewLoginCode"
+        android:visibility="invisible"
+        android:layout_alignRight="@+id/editTextName"
+        android:layout_alignEnd="@+id/editTextName"
+        android:layout_below="@+id/editTextIDCard"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:id="@+id/buttonLogin"
+        android:layout_row="4"
+        android:layout_column="36"
+        android:layout_below="@+id/editTextIDCard"
+        android:layout_alignRight="@+id/editTextIDCard"
+        android:layout_alignEnd="@+id/editTextIDCard"
+        android:layout_marginTop="78dp"
+        android:layout_gravity="right|bottom" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/editTextLoginCode"
+        android:layout_gravity="left|bottom" />
+
+    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
+        android:id="@+id/LoginFragment" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewErrorMsg"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/editTextIDCard"
+        android:layout_gravity="center_horizontal|bottom"/>
+</FrameLayout>
