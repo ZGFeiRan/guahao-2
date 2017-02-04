@@ -412,8 +412,8 @@ public class DoctorFragment extends Fragment implements AbsListView.OnItemClickL
                 {
                     mDoctorList.addItem(new DoctorList.DoctorItem(doctorName));
                 }
-                mAdapter.notifyDataSetChanged();
             }
+            mAdapter.notifyDataSetChanged();
         }
 
         private boolean getDoctorListFromJson(String jsonStr)
@@ -427,7 +427,8 @@ public class DoctorFragment extends Fragment implements AbsListView.OnItemClickL
                 boolean hasError = jsonObj.getBoolean("hasError");
                 if (hasError) {
                     String msg = jsonObj.getString("msg");
-                    ((MainActivity)getActivity()).showModelDialog(msg);
+                    //((MainActivity)getActivity()).showModelDialog(msg);
+                    Log.d("getDoctorListFromJson", msg);
                     return false;
                 }
                 JSONArray dataItems = jsonObj.getJSONArray("data");

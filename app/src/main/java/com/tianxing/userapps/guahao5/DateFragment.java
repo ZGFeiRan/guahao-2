@@ -15,13 +15,14 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 
+import com.tianxing.userapps.guahao5.dummy.DateItem;
 import com.tianxing.userapps.guahao5.dummy.DateList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -65,7 +66,7 @@ public class DateFragment extends Fragment implements AbsListView.OnItemClickLis
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private ArrayAdapter<DateList.DateItem> mAdapter;
+    private ArrayAdapter<DateItem> mAdapter;
 
     // TODO: Rename and change types of parameters
     public static DateFragment newInstance(String param1, String param2) {
@@ -121,7 +122,7 @@ public class DateFragment extends Fragment implements AbsListView.OnItemClickLis
         View view = inflater.inflate(R.layout.fragment_date, container, false);
 
         mDateList = new DateList();
-        mAdapter = new ArrayAdapter<DateList.DateItem>(getActivity(),
+        mAdapter = new ArrayAdapter<DateItem>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1, mDateList.ITEMS);
         // Set the adapter
         mListView = (AbsListView)view.findViewById(android.R.id.list);
@@ -190,7 +191,7 @@ public class DateFragment extends Fragment implements AbsListView.OnItemClickLis
      */
     public interface OnDateFragmentListener {
         // TODO: Update argument type and name
-        public void onDateClick(DateList.DateItem dataItem);
+        public void onDateClick(DateItem dataItem);
     }
 
     public class GetDateListTask extends AsyncTask<Void, Void, Boolean> {

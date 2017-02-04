@@ -5,6 +5,8 @@
     <string name="action_fav_doctorlist">收藏医生列表</string>
     <string name="action_fav_hpid_ksid">收藏科室</string>
     <string name="action_open_fav_hpid_ksid">打开收藏的科室</string>
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="morning">上午</string>
+    <string name="afternoon">下午</string>
+    <string name="night">晚上</string>
+    <string name="whole_day">全天</string>
 </resources>

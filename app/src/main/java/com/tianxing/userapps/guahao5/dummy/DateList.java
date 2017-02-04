@@ -1,11 +1,20 @@
 package com.tianxing.userapps.guahao5.dummy;
 
+import android.app.Fragment;
+import android.content.Context;
+import android.content.res.Resources;
+import android.text.style.TtsSpan;
 import android.util.Log;
+
+import com.tianxing.userapps.guahao5.MyApp;
+import com.tianxing.userapps.guahao5.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +32,7 @@ public class DateList {
     /**
      * An array of sample (dummy) items.
      */
-    public List<DateItem> ITEMS = new ArrayList<DateItem>();
+    public List<DateItem> ITEMS = new ArrayList<>();
 
     /**
      * A map of sample (dummy) items, by ID.
@@ -52,6 +61,7 @@ public class DateList {
 
     private void addItem(DateItem item) {
         ITEMS.add(item);
+        Collections.sort(ITEMS, item);
     }
     public void clear()
     {
@@ -109,26 +119,9 @@ public class DateList {
         }
         Integer weekDay = c.get(Calendar.DAY_OF_WEEK)-1;
         String date4Grab = sdf.format(c.getTime());
-        addItem(new DateItem(date4Grab, "1", "星期" + weekDay + " 抢号"));
-        addItem(new DateItem(date4Grab, "2", "星期" + weekDay + " 抢号"));
+        addItem(new DateItem(date4Grab, "-1", "星期" + weekDay + " 抢号"));
     }
     /**
      * A dummy item representing a piece of content.
      */
-    public class DateItem {
-        public String date;
-        public String dutyCode;
-        public String weekDay;
-
-        public DateItem(String date, String dutyCode, String weekDay) {
-            this.date = date;
-            this.dutyCode = dutyCode;
-            this.weekDay = weekDay;
-        }
-
-        @Override
-        public String toString() {
-            return date + " " + dutyCode + " " + weekDay;
-        }
-    }
 }

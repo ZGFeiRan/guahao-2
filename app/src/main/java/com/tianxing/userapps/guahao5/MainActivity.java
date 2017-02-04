@@ -13,6 +13,7 @@ import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.tianxing.userapps.guahao5.dummy.DateItem;
 import com.tianxing.userapps.guahao5.dummy.DateList;
 import com.tianxing.userapps.guahao5.dummy.DoctorList;
 import com.tianxing.userapps.guahao5.dummy.FavorateList;
@@ -47,7 +48,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     public String mCurDepName;
     public String mDoctorKeyword;
 
-    public DateList.DateItem mDateItem;
+    public DateItem mDateItem;
     public DoctorList.DoctorItem mDoctorItem;
 
     public SharedPreferences mDoctorListSP;
@@ -203,7 +204,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     }
 
     @Override
-    public void onDateClick(DateList.DateItem dateItem)
+    public void onDateClick(DateItem dateItem)
     {
         if (mDoctorFragment == null)
         {

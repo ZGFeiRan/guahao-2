@@ -25,6 +25,9 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.tianxing.userapps.guahao5.dummy.DateItem;
+import com.tianxing.userapps.guahao5.dummy.DateList;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -34,8 +37,10 @@ import org.json.JSONObject;
 import java.lang.reflect.Method;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -79,7 +84,7 @@ public class SubscribeMobileFragment extends Fragment {
     private Handler mSubscribeMsgHandler = null;
     private Timer mTimer = null;
 
-    private TimerTask mCurTimerTask = null;
+    private List<TimerTask> mCurTimerTask = new ArrayList<>();
 
     private OnSubscribeFragmentListener mListener = null;
 
@@ -167,9 +172,17 @@ public class SubscribeMobileFragment extends Fragment {
         mEditTextdxCode = (EditText) v.findViewById(R.id.editTextdxCode);
 
         if (mDutySourceId.isEmpty()) {
-            mEditTextDebugMsgName.setText("CheckCanSubscribe");
+            mEditTextDebugMsgName.setText("Loop to grab");
             mEditTextDebugMsg.setText("");
-            ScheduleTask(new CheckCanSubscribeTimerTask(), 2000);
+            if (mDutyCode.equals("-1")) { // loop by whole day time span
+                for (String key : DateItem.dutyCode2Name.keySet()) {
+                    if (!key.equals("-1")) {
+                        ScheduleTask(new CheckCanSubscribeTimerTask(key), 2000, false);
+                    }
+                }
+            } else {
+                ScheduleTask(new CheckCanSubscribeTimerTask(mDutyCode), 2000, false);
+            }
         } else {
             mEditTextDebugMsgName.setText("GetSubscribePage");
             mEditTextDebugMsg.setText("");
@@ -203,7 +216,7 @@ public class SubscribeMobileFragment extends Fragment {
     }
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
+    public void onHiddenChanged(boolean hidden) { // TODO fragment hidden by backkey, kill the timer task
         if (hidden) {
             ScheduleTask(null, 0);
         }
@@ -254,17 +267,23 @@ public class SubscribeMobileFragment extends Fragment {
         }
     }
 
-    private void ScheduleTask(TimerTask task, int ms) {
-        if (mTimer != null) {
-            if (mCurTimerTask != null) {
-                mCurTimerTask.cancel();
+    private  void ScheduleTask(TimerTask task, int periodMS) {
+        ScheduleTask(task, periodMS, true);
+    }
+    private void ScheduleTask(TimerTask task, int periodMS, boolean isPurge) {
+        if (mTimer != null && isPurge) {
+            if ( mCurTimerTask.size() > 0) {
+                for (int i = 0; i < mCurTimerTask.size(); ++i) {
+                    mCurTimerTask.get(i).cancel();
+                }
+                mCurTimerTask.clear();
             }
             //mTimer.cancel();
             mTimer.purge();
         }
-        mCurTimerTask = task;
-        if (mCurTimerTask != null) {
-            mTimer.schedule(mCurTimerTask, 0, ms);
+        if (task != null) {
+            mCurTimerTask.add(task);
+            mTimer.schedule(task, 0, periodMS);
         }
     }
 
@@ -493,9 +512,13 @@ public class SubscribeMobileFragment extends Fragment {
     }
 
     public class CheckCanSubscribeTimerTask extends TimerTask {
+        private String mDutyCode;
+        public CheckCanSubscribeTimerTask(String dutyCode) {
+            this.mDutyCode = dutyCode;
+        }
         @Override
         public void run() {
-            String canSubscribeRet = checkCanSubscribe();
+            String canSubscribeRet = checkCanSubscribe(this.mDutyCode);
             if (!canSubscribeRet.isEmpty()) {
                 Message message = Message.obtain();
                 message.obj = canSubscribeRet;
@@ -504,7 +527,7 @@ public class SubscribeMobileFragment extends Fragment {
         }
     }
 
-    protected String checkCanSubscribe() {
+    protected String checkCanSubscribe(String dutyCode) {
         Map headers = new HashMap();
         String referer = String.format(
                 "http://m.bjguahao.gov.cn/dpt/appoint/%s-%s.htm",
@@ -516,7 +539,7 @@ public class SubscribeMobileFragment extends Fragment {
         Map mPostKVs = new HashMap();
         mPostKVs.put("dutyDate", mDate1);
         mPostKVs.put("hospitalId", mHpid);
-        mPostKVs.put("dutyCode", mDutyCode);
+        mPostKVs.put("dutyCode", dutyCode);
         mPostKVs.put("departmentId", mKeid);
         mPostKVs.put("isAjax", "true");
         String url = HTTPSessionStatus.URL_DOCTOR_DUTY;
@@ -551,7 +574,7 @@ public class SubscribeMobileFragment extends Fragment {
                         mHpid,mKeid,mDoctorId,mDutySourceId);
                 mEditTextDebugMsg.setText("");
                 mEditTextDebugMsgName.setText("GetSubscribePage");
-                ScheduleTask(new GetSubscribePageTimerTask(), 2000);//TODO time
+                ScheduleTask(new GetSubscribePageTimerTask(), 2000);
                 //ScheduleTask(null, 0);
                 //GetSubscribePage();
                 mCheckCanSubscribeTimes = 0;
