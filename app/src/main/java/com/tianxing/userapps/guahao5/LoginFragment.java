@@ -120,29 +120,29 @@ public class LoginFragment extends Fragment {
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(name)) {
-            mEditTextName.setError(getString(R.string.hello_world));
+            mEditTextName.setError(getString(R.string.require_prompt));
             focusView = mEditTextName;
             cancel = true;
         }
 
-    // Check for a valid email address.
-    if (TextUtils.isEmpty(idCard)) {
-        mEditTextIDCard.setError(getString(R.string.hello_world));
-        focusView = mEditTextIDCard;
-        cancel = true;
-    }
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(idCard)) {
+            mEditTextIDCard.setError(getString(R.string.require_prompt));
+            focusView = mEditTextIDCard;
+            cancel = true;
+        }
 
-    if (cancel) {
-        // There was an error; don't attempt login and focus the first
-        // form field with an error.
-        focusView.requestFocus();
-    } else {
-        // Show a progress spinner, and kick off a background task to
-        // perform the user login attempt.
-        mAuthTask = new UserLoginTask(name, idCard, "");
-        mAuthTask.execute((Void) null);
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            mAuthTask = new UserLoginTask(name, idCard, "");
+            mAuthTask.execute((Void) null);
+        }
     }
-}
     private void fillName2password() {
         mName2password = (Map<String, String>)((MainActivity)getActivity()).mLoginInfoSP.getAll();
     }

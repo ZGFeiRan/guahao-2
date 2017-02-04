@@ -314,7 +314,7 @@ public class SubscribeFragment extends Fragment {
         String dxCode = mEditTextdxCode.getText().toString();
         if (dxCode.isEmpty())
         {
-            mEditTextdxCode.setError(getString(R.string.hello_world));
+            mEditTextdxCode.setError(getString(R.string.require_prompt));
             mEditTextdxCode.requestFocus();
             return;
         }

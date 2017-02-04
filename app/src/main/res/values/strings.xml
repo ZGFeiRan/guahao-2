@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Guahao5</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="require_prompt">To be required!</string>
     <string name="action_fav_doctorlist">收藏医生列表</string>
     <string name="action_fav_hpid_ksid">收藏科室</string>
     <string name="action_open_fav_hpid_ksid">打开收藏的科室</string>

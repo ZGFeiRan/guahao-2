@@ -2,3 +2,8 @@
 .gradle
 .idea
 guahao_in_github.iml
+/gradle/
+app/gradle/
+app/gradlew
+app/gradlew.bat
+app/local.properties
