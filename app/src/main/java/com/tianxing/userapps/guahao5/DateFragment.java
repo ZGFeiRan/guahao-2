@@ -201,6 +201,9 @@ public class DateFragment extends Fragment implements AbsListView.OnItemClickLis
         String patternRemainDateStr =
                 "class=\"ksorder_kyy.*\">[\\s\\S]*?<br>剩余:([0-9]+)<input .*? value=\"(.*?)\".*?>";
         Pattern patternRemainDate = Pattern.compile(patternRemainDateStr);
+        String patternFullDateStr =
+                "class=\"ksorder_ym.*\">[\\s\\S]*?<input .*? value=\"(.*?)\".*?>";
+        Pattern patternFullDate = Pattern.compile(patternFullDateStr);
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
@@ -218,9 +221,24 @@ public class DateFragment extends Fragment implements AbsListView.OnItemClickLis
             return getDateListByHTTPClientWrapper(url, headers);
         }
 
-        protected boolean ParseDataList(String html)
-        {
-            mDateList.clear();
+        protected void parseFull(String html) {
+            Matcher matcher;
+            matcher = patternFullDate.matcher(html);
+            Map<String, Integer> date2cnt = new HashMap();
+            while (matcher.find())
+            {
+                String date = matcher.group(1);
+                String[] dateSplit = date.split("_");
+                String dutyCodeDate = dateSplit[1] + "_" + dateSplit[2];
+                if (!date2cnt.containsKey(dutyCodeDate))
+                {
+                    date2cnt.put(dutyCodeDate, 0);
+                }
+                Log.d("dutyCodeDate:%s", dutyCodeDate);
+            }
+            mDateList.addItem(date2cnt, "已满");
+        }
+        protected void parseRemain(String html) {
             Matcher matcher;
             matcher = patternRemainDate.matcher(html);
             Map<String, Integer> date2cnt = new HashMap();
@@ -239,22 +257,12 @@ public class DateFragment extends Fragment implements AbsListView.OnItemClickLis
                 Log.d("dutyCodeDate:%s", dutyCodeDate);
             }
             mDateList.addItem(date2cnt, "可挂");
-            /*
-            if (matcher.find()){
-                ret = true;
-                String dateListStr = matcher.group(1);
-                String[] dateList = dateListStr.split("#");
-                mDateList.addItem(dateList, "可挂");
-            }
-
-            matcher = patternFullDate.matcher(html);
-            if (matcher.find()){
-                ret = true;
-                String dateListStr = matcher.group(1);
-                String[] dateList = dateListStr.split("#");
-                mDateList.addItem(dateList, "已满");
-            }
-            */
+        }
+        protected boolean ParseDataList(String html)
+        {
+            mDateList.clear();
+            parseFull(html);
+            parseRemain(html);
             mDateList.addGrabItem();
             return true;
         }
