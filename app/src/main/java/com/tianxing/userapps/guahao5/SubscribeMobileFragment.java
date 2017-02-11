@@ -174,6 +174,7 @@ public class SubscribeMobileFragment extends Fragment {
         if (mDutySourceId.isEmpty()) {
             mEditTextDebugMsgName.setText("Loop to grab");
             mEditTextDebugMsg.setText("");
+            ((CheckCanSubscribeMsgHandler)mCheckCanSubscribeMsgHandler).alreadyInGetSubscribePage = false;
             if (mDutyCode.equals("-1")) { // loop by whole day time span
                 for (String key : DateItem.dutyCode2Name.keySet()) {
                     if (!key.equals("-1")) {
@@ -470,10 +471,12 @@ public class SubscribeMobileFragment extends Fragment {
             boolean hasError = false;
             String offerTime = "";
             String numericalSequence = "";
+            String retMsg = "";
             try {
                 JSONObject jsonObject = new JSONObject(httpGetRet);
                 codeStatus = jsonObject.getInt("code");
                 hasError = jsonObject.getBoolean("hasError");
+                retMsg = jsonObject.getString("msg");
                 JSONArray data = jsonObject.getJSONArray("data");
                 if (data.length() > 0) {
                     JSONObject data0 = data.getJSONObject(0);
@@ -491,13 +494,7 @@ public class SubscribeMobileFragment extends Fragment {
                 Log.i("Subscribe CodeStatus", "200");
                 return;
             }
-            String realInfo = getAscii(httpGetRet);
-            if (!realInfo.isEmpty())
-            {
-                realInfo = ascii2native(realInfo);
-            }
             ++mCheckSubscribeTimes;
-            //TODO if yuyue full,schedule null
             if (mCheckSubscribeTimes > 5)
             {
                 ScheduleTask(null, 0);
@@ -505,7 +502,7 @@ public class SubscribeMobileFragment extends Fragment {
                 mCheckSubscribeTimes = 0;
                 return;
             }
-            mEditTextDebugMsg.setText(realInfo + " count " +mCheckSubscribeTimes);
+            mEditTextDebugMsg.setText(retMsg + " \ncount " +mCheckSubscribeTimes);
             //\u7cfb\u7edf\u7e41\u5fd9\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5\uff01//系统繁忙，请稍后再试！
             //\\u9a8c\\u8bc1\\u7801\\u4e0d\\u6b63\\u786e"//验证码不正确！
         }
@@ -558,6 +555,7 @@ public class SubscribeMobileFragment extends Fragment {
 
     class CheckCanSubscribeMsgHandler extends Handler {
         private Integer mCheckCanSubscribeTimes = 0;
+        public boolean alreadyInGetSubscribePage = false;
         public CheckCanSubscribeMsgHandler(Looper looper) {
             super(looper);
         }
@@ -569,7 +567,8 @@ public class SubscribeMobileFragment extends Fragment {
             mEditTextDebugMsgName.setText("CheckCanSubscribe");
             //find keyword
             boolean ret = getDoctorAttrByKeywordFromJSON(canSubscribeRet);
-            if (ret) {
+            if (ret && !alreadyInGetSubscribePage) {
+                alreadyInGetSubscribePage = true;
                 mSubscribeURL = String.format(HTTPSessionStatus.URL_ORDER_CONFIRM,
                         mHpid,mKeid,mDoctorId,mDutySourceId);
                 mEditTextDebugMsg.setText("");
