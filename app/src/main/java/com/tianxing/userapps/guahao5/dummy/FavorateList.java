@@ -25,7 +25,7 @@ public class FavorateList {
 
     static {
         // Add sample items.
-        addItem(new  Item("1", "协和", "1400116", "特需妇科门诊1"));
+        // addItem(new  Item("1", "协和", "1400116", "特需妇科门诊1"));
     }
 
     public static boolean addItem(Item item) {

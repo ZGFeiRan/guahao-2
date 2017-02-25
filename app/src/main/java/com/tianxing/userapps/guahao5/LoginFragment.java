@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -54,6 +55,7 @@ public class LoginFragment extends Fragment {
     // UI references.
     private AutoCompleteTextView mEditTextName;
     private AutoCompleteTextView mEditTextIDCard;
+    private AutoCompleteTextView mEditTextPatient;
     private ImageView mImageViewLoginCode;
     private TextView mTextViewErrorMsg;
 
@@ -68,7 +70,13 @@ public class LoginFragment extends Fragment {
 
     private OnLoginFragmentListener mListener;
 
-    private Map<String, String> mName2password;
+    private Set<String> mName2passwordSet;
+    private Map<String, String> mName2password = new HashMap<String, String>();
+    private Set<String> mPatients;
+
+    private String mName;
+    private String mIDCard;
+    private String mPatient;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -112,21 +120,22 @@ public class LoginFragment extends Fragment {
         mEditTextIDCard.setError(null);
 
         // Store values at the time of the login attempt.
-        String name = mEditTextName.getText().toString();
-        String idCard = mEditTextIDCard.getText().toString();
+        mName = mEditTextName.getText().toString();
+        mIDCard = mEditTextIDCard.getText().toString();
+        mPatient = mEditTextPatient.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(name)) {
+        if (TextUtils.isEmpty(mName)) {
             mEditTextName.setError(getString(R.string.require_prompt));
             focusView = mEditTextName;
             cancel = true;
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(idCard)) {
+        if (TextUtils.isEmpty(mIDCard)) {
             mEditTextIDCard.setError(getString(R.string.require_prompt));
             focusView = mEditTextIDCard;
             cancel = true;
@@ -139,12 +148,13 @@ public class LoginFragment extends Fragment {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            mAuthTask = new UserLoginTask(name, idCard, "");
+            mAuthTask = new UserLoginTask(mName, mIDCard, "");
             mAuthTask.execute((Void) null);
         }
     }
-    private void fillName2password() {
-        mName2password = (Map<String, String>)((MainActivity)getActivity()).mLoginInfoSP.getAll();
+    private void fillDataBySP() {
+        mName2passwordSet = ((MainActivity)getActivity()).mLoginInfoSP.getStringSet("login_info", null);
+        mPatients = ((MainActivity)getActivity()).mLoginInfoSP.getStringSet("patients", null);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -154,13 +164,22 @@ public class LoginFragment extends Fragment {
 
         mEditTextName = (AutoCompleteTextView)view.findViewById(R.id.editTextName);
 
-        fillName2password();
-        String[] names = null;
-        if (mName2password != null) {
+        fillDataBySP();
+        if (mName2passwordSet != null) {
+            for(String name : mName2passwordSet) {
+                String [] splited = name.split(",");
+                mName2password.put(splited[0], splited[1]);
+            }
+        }
+
+        String [] names = null;
+        if (mName2password.isEmpty())  {
             names = new String[mName2password.keySet().size()];
             mName2password.keySet().toArray(names);
+        } else {
+            names = new String[0];
         }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1,names);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, names);
         mEditTextName.setAdapter(arrayAdapter);
         mEditTextName.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -180,6 +199,24 @@ public class LoginFragment extends Fragment {
 
         mEditTextIDCard = (AutoCompleteTextView)view.findViewById(R.id.editTextIDCard);
         mEditTextIDCard.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        mEditTextPatient = (AutoCompleteTextView)view.findViewById(R.id.editTextPatient);
+        String[] patients = null;
+        if (mPatients != null) {
+            patients = new String[mPatients.size()];
+            mPatients.toArray(patients);
+        } else {
+            patients = new String[0];
+        }
+        ArrayAdapter<String> patientsAdapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1,patients);
+        mEditTextPatient.setAdapter(patientsAdapter);
+        mEditTextPatient.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mEditTextPatient.showDropDown();//显示下拉列表
+                return false;
+            }
+        });
 
         mTextViewErrorMsg = (TextView)view.findViewById(R.id.textViewErrorMsg);
         //set getLoginCode()' result to imageview;
@@ -215,7 +252,7 @@ public class LoginFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onLoginSuccess();
+            mListener.onLoginSuccess(mName, mIDCard, mPatient);
         }
     }
 
@@ -248,7 +285,7 @@ public class LoginFragment extends Fragment {
      */
     public interface OnLoginFragmentListener {
         // TODO: Update argument type and name
-        public void onLoginSuccess();
+        public void onLoginSuccess(String name, String IDCard, String patient);
     }
 
     /**
@@ -314,9 +351,6 @@ public class LoginFragment extends Fragment {
             boolean ret = loginMobile(msg);
             if (!ret) {
                 mErrorMsg = msg[0];
-            } else {
-                // save login info to SP
-                ((MainActivity)getActivity()).mLoginInfoEditor.putString(mName, mIDCard).commit();
             }
             return ret;
         }
@@ -351,7 +385,7 @@ public class LoginFragment extends Fragment {
             mAuthTask = null;
             if (success) {
                 //save cookie and switch to hospital layout
-                mListener.onLoginSuccess();
+                mListener.onLoginSuccess(mName, mIDCard, mPatient);
             } else {
                 mTextViewErrorMsg.setText(mErrorMsg);
                 mTextViewErrorMsg.requestFocus();

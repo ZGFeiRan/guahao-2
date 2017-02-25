@@ -47,6 +47,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     public String mCurHospitalName;
     public String mCurDepName;
     public String mDoctorKeyword;
+    public String mPatient;
 
     public DateItem mDateItem;
     public DoctorList.DoctorItem mDoctorItem;
@@ -167,8 +168,30 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     }
 
     @Override
-    public void onLoginSuccess()
+    public void onLoginSuccess(String name, String IDCard, String patient)
     {
+        // save login info to SP
+        String name2IDCard = "name," + IDCard;
+        boolean isExist = false;
+        Set<String> name2IDCardSet = mLoginInfoSP.getStringSet("login_info", new HashSet<String>());
+        for (String str : name2IDCardSet) {
+            if (name.equals(str.split(",")[0])) {
+                isExist = true;
+            }
+        }
+        if (!isExist) {
+            name2IDCardSet.add(name2IDCard);
+            mLoginInfoEditor.putStringSet("login_info", name2IDCardSet);
+        }
+
+        Set<String> patientsSet = mLoginInfoSP.getStringSet("patients", new HashSet<String>());
+        if (!patientsSet.contains(patient)) {
+            patientsSet.add(patient);
+            mLoginInfoEditor.putStringSet("patients", patientsSet);
+        }
+        mLoginInfoEditor.commit();
+        mPatient = patient;
+
         if (mHospitalFragment == null)
         {
             mHospitalFragment = new HospitalFragment();

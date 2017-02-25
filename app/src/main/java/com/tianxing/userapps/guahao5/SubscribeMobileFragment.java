@@ -65,6 +65,7 @@ public class SubscribeMobileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
     String mHpid;
     String mKeid;
     String mDate1;
@@ -74,6 +75,8 @@ public class SubscribeMobileFragment extends Fragment {
     String mSubscribeURL;
     String mDutySourceId;
     String mDutyCode;
+    String mPatient;
+
     private Map<String, String> mSubscribeInputKV = new HashMap<String, String>();
     WebView mWebView = null;
 
@@ -151,6 +154,8 @@ public class SubscribeMobileFragment extends Fragment {
         mDoctorId = activity.mDoctorItem.doctorId;
         mKeyword = activity.mDoctorKeyword;
         mDutyCode = activity.mDateItem.dutyCode;
+        mPatient = activity.mPatient;
+
         mTimer = new Timer(true);
 
         Looper looper = Looper.myLooper();
@@ -337,9 +342,8 @@ public class SubscribeMobileFragment extends Fragment {
         public GetSubscribePageMsgHandler(Looper looper) {
             super(looper);
         }
-        private String patternPatientIdStr =
-                "class=\"Rese_db_dl\"[\\s\\S]*?<input .*?name=\"hzr\" value=\"([0-9]+)\" checked=\"checked\"";
-        private Pattern patternPatientId = Pattern.compile(patternPatientIdStr);
+        private String mPatternPatientIdStr =
+                "class=\"Rese_db_dl\"[\\s\\S]*?<input .*?name=\"hzr\" value=\"([0-9]+)\".*>[\\s\\S]*?%s";
         @Override
         public void handleMessage(Message msg) {
             String canSubscribeRet = (String) msg.obj;
@@ -350,16 +354,18 @@ public class SubscribeMobileFragment extends Fragment {
             }
             mPatientId = GetPatientId(canSubscribeRet);
             if (mPatientId.isEmpty()) {
-                mEditTextDebugMsg.setText("PatientId empty");
+                mEditTextDebugMsg.setText("PatientId empty for " + mPatient);
                 ScheduleTask(null, 0);
                 return;
             }
-            mEditTextDebugMsg.setText("Success");
+            mEditTextDebugMsg.setText("GetPatientId Success");
             ScheduleTask(new GetdxCodeTimerTask(), 65000);
             //GetdxCode();
             //loop to get sms for dx code
         }
         private String GetPatientId(String msg) {
+            String pStr = String.format(mPatternPatientIdStr, mPatient);
+            Pattern patternPatientId = Pattern.compile(pStr);
             Matcher matcher = patternPatientId.matcher(msg);
             if (matcher.find()) {
                 String patientId = matcher.group(1);
