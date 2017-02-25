@@ -343,7 +343,7 @@ public class SubscribeMobileFragment extends Fragment {
             super(looper);
         }
         private String mPatternPatientIdStr =
-                "class=\"Rese_db_dl\"[\\s\\S]*?<input .*?name=\"hzr\" value=\"([0-9]+)\".*>[\\s\\S]*?%s";
+                "class=\"Rese_db_dl\"[\\s\\S]*?<input.*?name=\"hzr\" value=\"([0-9]+)\"[^<]*?>[\\s]{1}%s";
         @Override
         public void handleMessage(Message msg) {
             String canSubscribeRet = (String) msg.obj;
@@ -496,6 +496,7 @@ public class SubscribeMobileFragment extends Fragment {
             {
                 ScheduleTask(null, 0);
                 mEditTextDebugMsg.setText("No." + numericalSequence + "\n" + offerTime);
+                mEditTextDebugMsgName.setText("Subscribe success");
                 mCheckSubscribeTimes = 0;
                 Log.i("Subscribe CodeStatus", "200");
                 return;

@@ -171,9 +171,8 @@ public class LoginFragment extends Fragment {
                 mName2password.put(splited[0], splited[1]);
             }
         }
-
         String [] names = null;
-        if (mName2password.isEmpty())  {
+        if (!mName2password.isEmpty())  {
             names = new String[mName2password.keySet().size()];
             mName2password.keySet().toArray(names);
         } else {

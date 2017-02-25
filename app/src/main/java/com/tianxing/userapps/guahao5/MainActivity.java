@@ -171,7 +171,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     public void onLoginSuccess(String name, String IDCard, String patient)
     {
         // save login info to SP
-        String name2IDCard = "name," + IDCard;
+        String name2IDCard = name + "," + IDCard;
         boolean isExist = false;
         Set<String> name2IDCardSet = mLoginInfoSP.getStringSet("login_info", new HashSet<String>());
         for (String str : name2IDCardSet) {
