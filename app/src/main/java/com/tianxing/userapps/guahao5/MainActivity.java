@@ -141,6 +141,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
             if (!doctorSet.isEmpty()) {
                 mDoctorListEditor.putStringSet(k, doctorSet);
                 mDoctorListEditor.commit();
+                ALogger.getLogger(MainActivity.class).debug("commit doctorSet " + doctorSet.size());
             }
         }
         else if (id == R.id.action_fav_hpid_ksid)
@@ -151,7 +152,8 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
                 String k = mCurHospitalID + "_" + mCurDepID;
                 String v = mCurHospitalName + "_" + mCurDepName;
                 mFavHpKsEditor.putString(k, v);
-                mDoctorListEditor.commit();
+                mFavHpKsEditor.commit();
+                ALogger.getLogger(MainActivity.class).debug("commit FavHpKs k:" + k + "\nv:" + v);
             }
         }
         else if (id == R.id.action_open_fav_hpid_ksid)

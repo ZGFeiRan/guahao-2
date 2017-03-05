@@ -50,6 +50,8 @@ public class FavorateFragment extends Fragment implements AbsListView.OnItemClic
      */
     private ArrayAdapter<FavorateList.Item> mAdapter;
 
+    org.apache.log4j.Logger logger = ALogger.getLogger(FavorateFragment.class);
+
     // TODO: Rename and change types of parameters
     public static FavorateFragment newInstance(String param1, String param2) {
         FavorateFragment fragment = new FavorateFragment();
@@ -162,8 +164,10 @@ public class FavorateFragment extends Fragment implements AbsListView.OnItemClic
                 String hpName = splited[0];
                 String depName = splited[1];
                 FavorateList.addItem(new FavorateList.Item(hpid, hpName, depid, depName));
+                FavorateList.addItem(new FavorateList.Item(hpid, hpName, depid, depName));
             }
             Log.d("getHpKsList", "" + map.size());
+            logger.debug("getHpKsList " + map.size());
             return true;
         }
         return false;
