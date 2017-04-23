@@ -12,6 +12,23 @@ Referer:http://m.bjguahao.gov.cn/order/confirm/12-200004202-200911282-42506300.h
 User-Agent:Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36
 X-Requested-With:XMLHttpRequest
 
+儿研所预约请求
+dutySourceId:44476808
+hospitalId:102
+departmentId:200039676
+doctorId:201125958
+patientId:231193482
+jytCardId:
+medicareCardId:1232324435
+reimbursementType:-1
+smsVerifyCode:12343
+childrenName:李欣宸
+cidType:1
+childrenIdNo:110112201612216396
+childrenBirthday:2016-12-21
+childrenGender:1
+isAjax:true
+
 Request URL:http://m.bjguahao.gov.cn/v/sendorder.htm
 Request Method:POST
 Status Code:200 OK

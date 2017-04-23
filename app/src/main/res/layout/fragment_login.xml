@@ -6,12 +6,11 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:text="name/phone"
+        android:text="手机号"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewName"
         android:layout_gravity="left|top" />
-
     <AutoCompleteTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,13 +19,35 @@
         android:id="@+id/editTextName"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/textViewIDCard"
-        android:layout_above="@+id/editTextIDCard"
-        android:layout_alignRight="@+id/editTextIDCard"
-        android:layout_alignEnd="@+id/editTextIDCard"
+        android:layout_above="@+id/editTextPassword"
+        android:layout_alignRight="@+id/editTextPassword"
+        android:layout_alignEnd="@+id/editTextPassword"
         android:layout_gravity="right|top" />
 
     <TextView
-        android:text="IDCard/pwd"
+        android:text="就诊人"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewPatient"
+        android:layout_below="@+id/textViewIDCard"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <AutoCompleteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextPatient"
+        android:layout_below="@+id/editTextPassword"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/editTextPassword"
+        android:layout_toLeftOf="@+id/editTextPassword"
+        android:ems="10"
+        android:layout_gravity="right|center_horizontal" />
+
+    <TextView
+        android:text="登陆密码"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewIDCard"
@@ -35,40 +56,41 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="14dp"
         android:layout_gravity="left|center_vertical" />
-
     <AutoCompleteTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editTextIDCard"
-        android:layout_below="@+id/editTextName"
+        android:id="@+id/editTextPassword"
+        android:layout_below="@+id/editTextPatient"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/editTextIDCard"
-        android:layout_toLeftOf="@+id/editTextIDCard"
+        android:layout_toStartOf="@+id/editTextPatient"
+        android:layout_toLeftOf="@+id/editTextPatient"
         android:ems="10"
         android:layout_gravity="right|center_vertical" />
+
     <TextView
-        android:text="Patient"
+        android:text="就诊人医保卡条码"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewPatient"
+        android:id="@+id/textViewPatientMedicareIDCard"
         android:layout_below="@+id/textViewIDCard"
-        android:layout_marginTop="100dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="left|center_vertical" />
     <AutoCompleteTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editTextPatient"
-        android:layout_below="@+id/editTextIDCard"
-        android:layout_marginTop="100dp"
+        android:id="@+id/editTextPatientMedicareIDCard"
+        android:layout_below="@+id/editTextPassword"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/editTextIDCard"
-        android:layout_toLeftOf="@+id/editTextIDCard"
+        android:layout_toStartOf="@+id/editTextPassword"
+        android:layout_toLeftOf="@+id/editTextPassword"
+        android:layout_marginTop="100dp"
         android:ems="10"
-        android:layout_gravity="right|center_horizontal" />
+        android:layout_gravity="right|center_vertical" />
+
     <ImageView
         android:layout_width="200dp"
         android:layout_height="100dp"
@@ -83,13 +105,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="登陆"
         android:id="@+id/buttonLogin"
         android:layout_row="4"
         android:layout_column="36"
         android:layout_below="@+id/editTextPatient"
-        android:layout_alignRight="@+id/editTextIDCard"
-        android:layout_alignEnd="@+id/editTextIDCard"
+        android:layout_alignRight="@+id/editTextPassword"
+        android:layout_alignEnd="@+id/editTextPassword"
         android:layout_marginTop="78dp"
         android:layout_gravity="right|bottom" />
 

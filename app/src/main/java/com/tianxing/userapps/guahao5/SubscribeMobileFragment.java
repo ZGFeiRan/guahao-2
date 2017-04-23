@@ -61,25 +61,23 @@ public class SubscribeMobileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     String mHpid;
     String mKeid;
     String mDate1;
     String mDoctorId;
     String mPatientId;
+    String mPatientIDCard;
     String mKeyword;
     String mSubscribeURL;
     String mDutySourceId;
     String mDutyCode;
     String mPatient;
-
-    private Map<String, String> mSubscribeInputKV = new HashMap<String, String>();
+    String mMedicareCardId;
     WebView mWebView = null;
-
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+    private Map<String, String> mSubscribeInputKV = new HashMap<String, String>();
     private Handler mCheckCanSubscribeMsgHandler = null;
     private Handler mGetSubscribePageMsgHandler = null;
     private Handler mGetdxCodeMsgHandler = null;
@@ -94,6 +92,22 @@ public class SubscribeMobileFragment extends Fragment {
     private EditText mEditTextDebugMsgName;
     private EditText mEditTextDebugMsg;
     private EditText mEditTextdxCode;
+    private View.OnKeyListener backListener = new View.OnKeyListener() {
+        @Override
+        public boolean onKey(View view, int i, KeyEvent keyEvent) {
+            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                if (i == KeyEvent.KEYCODE_BACK) {
+                    onHiddenChanged(true);
+                    return false;
+                }
+            }
+            return false;
+        }
+    };
+
+    public SubscribeMobileFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -111,10 +125,6 @@ public class SubscribeMobileFragment extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public SubscribeMobileFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -155,6 +165,7 @@ public class SubscribeMobileFragment extends Fragment {
         mKeyword = activity.mDoctorKeyword;
         mDutyCode = activity.mDateItem.dutyCode;
         mPatient = activity.mPatient;
+        mMedicareCardId = activity.mPatientMedicareIDCard;
 
         mTimer = new Timer(true);
 
@@ -179,7 +190,7 @@ public class SubscribeMobileFragment extends Fragment {
         if (mDutySourceId.isEmpty()) {
             mEditTextDebugMsgName.setText("Loop to grab");
             mEditTextDebugMsg.setText("");
-            ((CheckCanSubscribeMsgHandler)mCheckCanSubscribeMsgHandler).alreadyInGetSubscribePage = false;
+            ((CheckCanSubscribeMsgHandler) mCheckCanSubscribeMsgHandler).alreadyInGetSubscribePage = false;
             if (mDutyCode.equals("-1")) { // loop by whole day time span
                 for (String key : DateItem.dutyCode2Name.keySet()) {
                     if (!key.equals("-1")) {
@@ -228,57 +239,13 @@ public class SubscribeMobileFragment extends Fragment {
         }
     }
 
-    private View.OnKeyListener backListener = new View.OnKeyListener() {
-        @Override
-        public boolean onKey(View view, int i, KeyEvent keyEvent) {
-            if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                if (i == KeyEvent.KEYCODE_BACK) {
-                    onHiddenChanged(true);
-                    return false;
-                }
-            }
-            return false;
-        }
-    };
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnSubscribeFragmentListener {
-        public void onSubscribeSuccess();
-    }
-
-    class HTMLCallback {
-        @JavascriptInterface
-        public void getHTML(String html, String url) {
-            if (url.equals("GetSubscribePage")) {
-                Message message = Message.obtain();
-                message.obj = html;
-                mGetSubscribePageMsgHandler.sendMessage(message);
-            } else if (url.equals("GetdxCode")) {
-                Message message = Message.obtain();
-                message.obj = html;
-                mGetdxCodeMsgHandler.sendMessage(message);
-            } else if (url.equals("Subscribe") && html.length() > 0) {
-                Message message = Message.obtain();
-                message.obj = html;
-                mSubscribeMsgHandler.sendMessage(message);
-            }
-        }
-    }
-
-    private  void ScheduleTask(TimerTask task, int periodMS) {
+    private void ScheduleTask(TimerTask task, int periodMS) {
         ScheduleTask(task, periodMS, true);
     }
+
     private void ScheduleTask(TimerTask task, int periodMS, boolean isPurge) {
         if (mTimer != null && isPurge) {
-            if ( mCurTimerTask.size() > 0) {
+            if (mCurTimerTask.size() > 0) {
                 for (int i = 0; i < mCurTimerTask.size(); ++i) {
                     mCurTimerTask.get(i).cancel();
                 }
@@ -303,7 +270,7 @@ public class SubscribeMobileFragment extends Fragment {
         headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 
         mSubscribeURL = String.format(HTTPSessionStatus.URL_ORDER_CONFIRM,
-                mHpid,mKeid,mDoctorId,mDutySourceId);
+                mHpid, mKeid, mDoctorId, mDutySourceId);
         //return GetSubscribePageByWebview(mSubscribeURL, headers);
         return GetSubscribePageByHTTPClientWrapper(mSubscribeURL, headers);
     }
@@ -326,66 +293,16 @@ public class SubscribeMobileFragment extends Fragment {
         return "";
     }
 
-    public class GetSubscribePageTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            String canSubscribeRet = GetSubscribePage();
-            if (!canSubscribeRet.isEmpty()) {
-                Message message = Message.obtain();
-                message.obj = canSubscribeRet;
-                mGetSubscribePageMsgHandler.sendMessage(message);
-            }
-        }
+    private String SplitBirthdayFromIDCard(String IDCard) {
+        String year = IDCard.substring(6, 10);
+        String month = IDCard.substring(10, 12);
+        String day = IDCard.substring(12, 14);
+        return year + "-" + month + "-" + day;
     }
 
-    class GetSubscribePageMsgHandler extends Handler {
-        public GetSubscribePageMsgHandler(Looper looper) {
-            super(looper);
-        }
-        private String mPatternPatientIdStr =
-                "class=\"Rese_db_dl\"[\\s\\S]*?<input.*?name=\"hzr\" value=\"([0-9]+)\"[^<]*?>[\\s]{1}%s";
-        @Override
-        public void handleMessage(Message msg) {
-            String canSubscribeRet = (String) msg.obj;
-            if (canSubscribeRet.contains("<script>alert('请先登录 未注册用户请先注册 点击确定进入登陆界面');")) {
-                mEditTextDebugMsg.setText("请先登录");
-                ScheduleTask(null, 0);
-                return;
-            }
-            mPatientId = GetPatientId(canSubscribeRet);
-            if (mPatientId.isEmpty()) {
-                mEditTextDebugMsg.setText("PatientId empty for " + mPatient);
-                ScheduleTask(null, 0);
-                return;
-            }
-            mEditTextDebugMsg.setText("GetPatientId Success");
-            ScheduleTask(new GetdxCodeTimerTask(), 65000);
-            //GetdxCode();
-            //loop to get sms for dx code
-        }
-        private String GetPatientId(String msg) {
-            String pStr = String.format(mPatternPatientIdStr, mPatient);
-            Pattern patternPatientId = Pattern.compile(pStr);
-            Matcher matcher = patternPatientId.matcher(msg);
-            if (matcher.find()) {
-                String patientId = matcher.group(1);
-                return patientId;
-            }
-            return "";
-        }
-    }
-
-
-    public class SubscribeTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            String subscribeRet = Subscribe();
-            if (!subscribeRet.isEmpty()) {
-                Message message = Message.obtain();
-                message.obj = subscribeRet;
-                mSubscribeMsgHandler.sendMessage(message);
-            }
-        }
+    private String SplitGenderFromIDCard(String IDCard) {
+        String genderChar = IDCard.substring(16,17);
+        return (Integer.valueOf(genderChar) % 2 == 1) ? "1" : "2";
     }
 
     public void onSubscribeClick() {
@@ -401,7 +318,21 @@ public class SubscribeMobileFragment extends Fragment {
         mSubscribeInputKV.put("doctorId", mDoctorId);
         mSubscribeInputKV.put("patientId", mPatientId);
         mSubscribeInputKV.put("smsVerifyCode", dxCode);
-        mSubscribeInputKV.put("isAjax","true");
+        mSubscribeInputKV.put("isAjax", "true");
+
+        if (!mMedicareCardId.isEmpty()) { // children hospital special requirements
+            String birthday = SplitBirthdayFromIDCard(mPatientIDCard);
+            String gender = SplitGenderFromIDCard(mPatientIDCard);
+            mSubscribeInputKV.put("jytCardId", "");
+            mSubscribeInputKV.put("medicareCardId", mMedicareCardId);
+            mSubscribeInputKV.put("reimbursementType", "8");
+            mSubscribeInputKV.put("childrenName", mPatient);
+            mSubscribeInputKV.put("cidType", "1");
+            mSubscribeInputKV.put("childrenIdNo", mPatientIDCard);
+            mSubscribeInputKV.put("childrenBirthday", birthday);
+            mSubscribeInputKV.put("childrenGender", gender);
+        }
+
         mEditTextDebugMsgName.setText("Subscribe");
         ScheduleTask(new SubscribeTimerTask(), 2000);
         //Subscribe();
@@ -441,96 +372,6 @@ public class SubscribeMobileFragment extends Fragment {
         return SubscribeByHTTPClientWrapper(orderURL, headers);
     }
 
-    class SubscribeMsgHandler extends Handler {
-        int mCheckSubscribeTimes = 0;
-
-        public SubscribeMsgHandler(Looper looper) {
-            super(looper);
-        }
-
-        public String ascii2native(String ascii) {
-            int n = ascii.length() / 6;
-            StringBuilder sb = new StringBuilder(n);
-            for (int i = 0, j = 2; i < n; i++, j += 6) {
-                String code = ascii.substring(j, j + 4);
-                char ch = (char) Integer.parseInt(code, 16);
-                sb.append(ch);
-            }
-            return sb.toString();
-        }
-        private String getAscii(String str)
-        {
-            final String patternStr = "(\\\\u[0-9a-z]{4})+";
-            final Pattern p = Pattern.compile(patternStr);
-            Matcher m = p.matcher(str);
-            if (m.find())
-            {
-                return m.group(0);
-            }
-            return "";
-        }
-        @Override
-        public void handleMessage(Message msg) {
-            String httpGetRet = (String) msg.obj;
-            Log.d("SubscribeMsg", httpGetRet);
-            Integer codeStatus = -1;
-            boolean hasError = false;
-            String offerTime = "";
-            String numericalSequence = "";
-            String retMsg = "";
-            try {
-                JSONObject jsonObject = new JSONObject(httpGetRet);
-                codeStatus = jsonObject.getInt("code");
-                hasError = jsonObject.getBoolean("hasError");
-                retMsg = jsonObject.getString("msg");
-                JSONArray data = jsonObject.getJSONArray("data");
-                if (data.length() > 0) {
-                    JSONObject data0 = data.getJSONObject(0);
-                    offerTime = data0.getString("offerTime");
-                    numericalSequence = data0.getString("numericalSequence");
-                }
-            } catch (JSONException e) {
-                Log.e("JSONException", e.toString());
-            }
-            if (codeStatus == 200 && !hasError)
-            {
-                ScheduleTask(null, 0);
-                mEditTextDebugMsg.setText("No." + numericalSequence + "\n" + offerTime);
-                mEditTextDebugMsgName.setText("Subscribe success");
-                mCheckSubscribeTimes = 0;
-                Log.i("Subscribe CodeStatus", "200");
-                return;
-            }
-            ++mCheckSubscribeTimes;
-            if (mCheckSubscribeTimes > 5)
-            {
-                ScheduleTask(null, 0);
-                mEditTextDebugMsg.setText("stop count=" + mCheckSubscribeTimes);
-                mCheckSubscribeTimes = 0;
-                return;
-            }
-            mEditTextDebugMsg.setText(retMsg + " \ncount " +mCheckSubscribeTimes);
-            //\u7cfb\u7edf\u7e41\u5fd9\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5\uff01//系统繁忙，请稍后再试！
-            //\\u9a8c\\u8bc1\\u7801\\u4e0d\\u6b63\\u786e"//验证码不正确！
-        }
-    }
-
-    public class CheckCanSubscribeTimerTask extends TimerTask {
-        private String mDutyCode;
-        public CheckCanSubscribeTimerTask(String dutyCode) {
-            this.mDutyCode = dutyCode;
-        }
-        @Override
-        public void run() {
-            String canSubscribeRet = checkCanSubscribe(this.mDutyCode);
-            if (!canSubscribeRet.isEmpty()) {
-                Message message = Message.obtain();
-                message.obj = canSubscribeRet;
-                mCheckCanSubscribeMsgHandler.sendMessage(message);
-            }
-        }
-    }
-
     protected String checkCanSubscribe(String dutyCode) {
         Map headers = new HashMap();
         String referer = String.format(
@@ -558,65 +399,6 @@ public class SubscribeMobileFragment extends Fragment {
             e.printStackTrace();
         }
         return "";
-    }
-
-    class CheckCanSubscribeMsgHandler extends Handler {
-        private Integer mCheckCanSubscribeTimes = 0;
-        public boolean alreadyInGetSubscribePage = false;
-        public CheckCanSubscribeMsgHandler(Looper looper) {
-            super(looper);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            String canSubscribeRet = (String) msg.obj;
-            Log.d("msg", canSubscribeRet);
-            mEditTextDebugMsgName.setText("CheckCanSubscribe");
-            //find keyword
-            boolean ret = getDoctorAttrByKeywordFromJSON(canSubscribeRet);
-            if (ret && !alreadyInGetSubscribePage) {
-                alreadyInGetSubscribePage = true;
-                mSubscribeURL = String.format(HTTPSessionStatus.URL_ORDER_CONFIRM,
-                        mHpid,mKeid,mDoctorId,mDutySourceId);
-                mEditTextDebugMsg.setText("");
-                mEditTextDebugMsgName.setText("GetSubscribePage");
-                ScheduleTask(new GetSubscribePageTimerTask(), 2000);
-                //ScheduleTask(null, 0);
-                //GetSubscribePage();
-                mCheckCanSubscribeTimes = 0;
-                return;
-            }
-            mEditTextDebugMsg.setText("count " + ++mCheckCanSubscribeTimes);
-        }
-
-        private boolean getDoctorAttrByKeywordFromJSON(String jsonStr) {
-            try {
-                JSONObject jsonObj = new JSONObject(jsonStr);
-                JSONArray datids = jsonObj.getJSONArray("data");
-                Pattern p = Pattern.compile(mKeyword);
-                for (int i = 0; i < datids.length(); i++) {
-                    JSONObject datid = datids.getJSONObject(i);
-                    String doctorName = datid.getString("doctorName");
-                    String skill = datid.getString("skill");
-                    String remainAvailableNumber = datid.getString("remainAvailableNumber");
-
-                    if ((p.matcher(doctorName).find()|| p.matcher(skill).find())
-                            && !remainAvailableNumber.equals("0")) {
-                        Log.d("getDoctorAttrFromJSON",
-                                "doctorName:" + doctorName +
-                                        ",skill:" + skill +
-                                        ",remainNum:" + remainAvailableNumber +
-                                        ",keyword:" + mKeyword);
-                        mDutySourceId = datid.getString("dutySourceId");
-                        mDoctorId = datid.getString("doctorId");
-                        return true;
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
     }
 
     protected String GetdxCode() {
@@ -655,6 +437,255 @@ public class SubscribeMobileFragment extends Fragment {
         return ret;
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnSubscribeFragmentListener {
+        public void onSubscribeSuccess();
+    }
+
+    class HTMLCallback {
+        @JavascriptInterface
+        public void getHTML(String html, String url) {
+            if (url.equals("GetSubscribePage")) {
+                Message message = Message.obtain();
+                message.obj = html;
+                mGetSubscribePageMsgHandler.sendMessage(message);
+            } else if (url.equals("GetdxCode")) {
+                Message message = Message.obtain();
+                message.obj = html;
+                mGetdxCodeMsgHandler.sendMessage(message);
+            } else if (url.equals("Subscribe") && html.length() > 0) {
+                Message message = Message.obtain();
+                message.obj = html;
+                mSubscribeMsgHandler.sendMessage(message);
+            }
+        }
+    }
+
+    public class GetSubscribePageTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            String canSubscribeRet = GetSubscribePage();
+            if (!canSubscribeRet.isEmpty()) {
+                Message message = Message.obtain();
+                message.obj = canSubscribeRet;
+                mGetSubscribePageMsgHandler.sendMessage(message);
+            }
+        }
+    }
+
+    class GetSubscribePageMsgHandler extends Handler {
+        private String mPatternPatientIdStr =
+                "class=\"Rese_db_dl\"[\\s\\S]*?<input.*?name=\"hzr\" value=\"([0-9]+)\"[^<]*?>[\\s]{1}%s[\\s|]{3}([0-9]+)";
+
+        public GetSubscribePageMsgHandler(Looper looper) {
+            super(looper);
+        }
+
+        // <dl class="Rese_db_dl"><dt>就 诊 人：</dt><dd><p><input type="radio" name="hzr" value="217170114" checked="checked"> 李涛 | 511602198401100014</p><p><input type="radio" name="hzr" value="231193482"> 李欣宸 | 110112201612216396</p>
+        @Override
+        public void handleMessage(Message msg) {
+            String canSubscribeRet = (String) msg.obj;
+            if (canSubscribeRet.contains("<script>alert('请先登录 未注册用户请先注册 点击确定进入登陆界面');")) {
+                mEditTextDebugMsg.setText("请先登录");
+                ScheduleTask(null, 0);
+                return;
+            }
+            GetPatientIdAndPatientIDCard(canSubscribeRet);
+            if (mPatientId.isEmpty()) {
+                mEditTextDebugMsg.setText("PatientId empty for " + mPatient);
+                ScheduleTask(null, 0);
+                return;
+            }
+            mEditTextDebugMsg.setText("GetPatientId Success");
+            ScheduleTask(new GetdxCodeTimerTask(), 65000);
+            //GetdxCode();
+            //loop to get sms for dx code
+        }
+
+        private void GetPatientIdAndPatientIDCard(String msg) {
+            mPatientId = "";
+            mPatientIDCard = "";
+            String pStr = String.format(mPatternPatientIdStr, mPatient);
+            Pattern patternPatientId = Pattern.compile(pStr);
+            Matcher matcher = patternPatientId.matcher(msg);
+            if (matcher.find()) {
+                mPatientId = matcher.group(1);
+                mPatientIDCard = matcher.group(2);
+            }
+        }
+    }
+
+    public class SubscribeTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            String subscribeRet = Subscribe();
+            if (!subscribeRet.isEmpty()) {
+                Message message = Message.obtain();
+                message.obj = subscribeRet;
+                mSubscribeMsgHandler.sendMessage(message);
+            }
+        }
+    }
+
+    class SubscribeMsgHandler extends Handler {
+        int mCheckSubscribeTimes = 0;
+
+        public SubscribeMsgHandler(Looper looper) {
+            super(looper);
+        }
+
+        public String ascii2native(String ascii) {
+            int n = ascii.length() / 6;
+            StringBuilder sb = new StringBuilder(n);
+            for (int i = 0, j = 2; i < n; i++, j += 6) {
+                String code = ascii.substring(j, j + 4);
+                char ch = (char) Integer.parseInt(code, 16);
+                sb.append(ch);
+            }
+            return sb.toString();
+        }
+
+        private String getAscii(String str) {
+            final String patternStr = "(\\\\u[0-9a-z]{4})+";
+            final Pattern p = Pattern.compile(patternStr);
+            Matcher m = p.matcher(str);
+            if (m.find()) {
+                return m.group(0);
+            }
+            return "";
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            String httpGetRet = (String) msg.obj;
+            Log.d("SubscribeMsg", httpGetRet);
+            Integer codeStatus = -1;
+            boolean hasError = false;
+            String offerTime = "";
+            String numericalSequence = "";
+            String retMsg = "";
+            try {
+                JSONObject jsonObject = new JSONObject(httpGetRet);
+                codeStatus = jsonObject.getInt("code");
+                hasError = jsonObject.getBoolean("hasError");
+                retMsg = jsonObject.getString("msg");
+                JSONArray data = jsonObject.getJSONArray("data");
+                if (data.length() > 0) {
+                    JSONObject data0 = data.getJSONObject(0);
+                    offerTime = data0.getString("offerTime");
+                    numericalSequence = data0.getString("numericalSequence");
+                }
+            } catch (JSONException e) {
+                Log.e("JSONException", e.toString());
+            }
+            if (codeStatus == 200 && !hasError) {
+                ScheduleTask(null, 0);
+                mEditTextDebugMsg.setText("No." + numericalSequence + "\n" + offerTime);
+                mEditTextDebugMsgName.setText("Subscribe success");
+                mCheckSubscribeTimes = 0;
+                Log.i("Subscribe CodeStatus", "200");
+                return;
+            }
+            ++mCheckSubscribeTimes;
+            if (mCheckSubscribeTimes > 5) {
+                ScheduleTask(null, 0);
+                mEditTextDebugMsg.setText("stop count=" + mCheckSubscribeTimes);
+                mCheckSubscribeTimes = 0;
+                return;
+            }
+            mEditTextDebugMsg.setText(retMsg + " \ncount " + mCheckSubscribeTimes);
+            //\u7cfb\u7edf\u7e41\u5fd9\uff0c\u8bf7\u7a0d\u540e\u518d\u8bd5\uff01//系统繁忙，请稍后再试！
+            //\\u9a8c\\u8bc1\\u7801\\u4e0d\\u6b63\\u786e"//验证码不正确！
+        }
+    }
+
+    public class CheckCanSubscribeTimerTask extends TimerTask {
+        private String mDutyCode;
+
+        public CheckCanSubscribeTimerTask(String dutyCode) {
+            this.mDutyCode = dutyCode;
+        }
+
+        @Override
+        public void run() {
+            String canSubscribeRet = checkCanSubscribe(this.mDutyCode);
+            if (!canSubscribeRet.isEmpty()) {
+                Message message = Message.obtain();
+                message.obj = canSubscribeRet;
+                mCheckCanSubscribeMsgHandler.sendMessage(message);
+            }
+        }
+    }
+
+    class CheckCanSubscribeMsgHandler extends Handler {
+        public boolean alreadyInGetSubscribePage = false;
+        private Integer mCheckCanSubscribeTimes = 0;
+
+        public CheckCanSubscribeMsgHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            String canSubscribeRet = (String) msg.obj;
+            Log.d("msg", canSubscribeRet);
+            mEditTextDebugMsgName.setText("CheckCanSubscribe");
+            //find keyword
+            boolean ret = getDoctorAttrByKeywordFromJSON(canSubscribeRet);
+            if (ret && !alreadyInGetSubscribePage) {
+                alreadyInGetSubscribePage = true;
+                mSubscribeURL = String.format(HTTPSessionStatus.URL_ORDER_CONFIRM,
+                        mHpid, mKeid, mDoctorId, mDutySourceId);
+                mEditTextDebugMsg.setText("");
+                mEditTextDebugMsgName.setText("GetSubscribePage");
+                ScheduleTask(new GetSubscribePageTimerTask(), 2000);
+                //ScheduleTask(null, 0);
+                //GetSubscribePage();
+                mCheckCanSubscribeTimes = 0;
+                return;
+            }
+            mEditTextDebugMsg.setText("count " + ++mCheckCanSubscribeTimes);
+        }
+
+        private boolean getDoctorAttrByKeywordFromJSON(String jsonStr) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+                JSONArray datids = jsonObj.getJSONArray("data");
+                Pattern p = Pattern.compile(mKeyword);
+                for (int i = 0; i < datids.length(); i++) {
+                    JSONObject datid = datids.getJSONObject(i);
+                    String doctorName = datid.getString("doctorName");
+                    String skill = datid.getString("skill");
+                    String remainAvailableNumber = datid.getString("remainAvailableNumber");
+
+                    if ((p.matcher(doctorName).find() || p.matcher(skill).find())
+                            && !remainAvailableNumber.equals("0")) {
+                        Log.d("getDoctorAttrFromJSON",
+                                "doctorName:" + doctorName +
+                                        ",skill:" + skill +
+                                        ",remainNum:" + remainAvailableNumber +
+                                        ",keyword:" + mKeyword);
+                        mDutySourceId = datid.getString("dutySourceId");
+                        mDoctorId = datid.getString("doctorId");
+                        return true;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+    }
+
     public class GetdxCodeTimerTask extends TimerTask {
         @Override
         public void run() {
@@ -667,6 +698,7 @@ public class SubscribeMobileFragment extends Fragment {
 
     class GetdxCodeMsgHandler extends Handler {
         int cnt = 0;
+
         public GetdxCodeMsgHandler(Looper looper) {
             super(looper);
         }
@@ -684,8 +716,7 @@ public class SubscribeMobileFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if (codeStatus == 200)
-            {
+            if (codeStatus == 200) {
                 ScheduleTask(new GetSMS4dxCodeTimerTask(), 2000);
                 mEditTextDebugMsg.setText("Success");
                 cnt = 0;
@@ -704,11 +735,12 @@ public class SubscribeMobileFragment extends Fragment {
     public class GetSMS4dxCodeTimerTask extends TimerTask {
         private Date startTime;
         private ContentResolver cr;
-        GetSMS4dxCodeTimerTask()
-        {
+
+        GetSMS4dxCodeTimerTask() {
             startTime = new Date(System.currentTimeMillis());
             this.cr = SubscribeMobileFragment.this.getActivity().getContentResolver();
         }
+
         @Override
         public void run() {
             String sms4dxCode = GetSMS4dxCode();
@@ -719,14 +751,14 @@ public class SubscribeMobileFragment extends Fragment {
 
         protected String GetSMS4dxCode() {
             final String SMS_URI_INBOX = "content://sms/inbox";
-            final long DIFF_BIG = 2*60*1000;
-            final long DIFF_SMALL = -5*60*1000;
+            final long DIFF_BIG = 2 * 60 * 1000;
+            final long DIFF_SMALL = -5 * 60 * 1000;
             try {
                 String[] projection = new String[]{"_id", "address", "person",
                         "body", "date", "type"};
                 Uri uri = Uri.parse(SMS_URI_INBOX);
                 Cursor cur = cr.query(uri, projection, null, null, "date desc");
-                Pattern p = Pattern.compile("([0-9]{6})");
+                Pattern p = Pattern.compile("[^0-9]([0-9]{6})[^0-9]");
                 if (cur.moveToFirst()) {//start loop with the newest sms
                     int phoneNumberColumn = cur.getColumnIndex("address");
                     int smsbodyColumn = cur.getColumnIndex("body");
@@ -753,18 +785,20 @@ public class SubscribeMobileFragment extends Fragment {
                     } while (cur.moveToNext());
                 }
                 cur.close();
-            }
-            catch(SQLiteException ex){
+            } catch (SQLiteException ex) {
                 Log.d("in getSmsInPhone", ex.getMessage());
             }
             return "";
         }
     }
+
     class GetSMS4dxCodeMsgHandler extends Handler {
+        private int cnt = 0;
+
         public GetSMS4dxCodeMsgHandler(Looper looper) {
             super(looper);
         }
-        private int cnt = 0;
+
         @Override
         public void handleMessage(Message msg) {
             String smsContent = (String) msg.obj;
@@ -777,8 +811,7 @@ public class SubscribeMobileFragment extends Fragment {
                 ScheduleTask(null, 0);
                 onSubscribeClick();
             }
-            if (cnt > 15)
-            {
+            if (cnt > 15) {
                 mEditTextDebugMsg.setText("stop");
                 cnt = 0;
                 ScheduleTask(null, 0);

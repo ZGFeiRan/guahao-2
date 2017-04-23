@@ -48,6 +48,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     public String mCurDepName;
     public String mDoctorKeyword;
     public String mPatient;
+    public String mPatientMedicareIDCard;
 
     public DateItem mDateItem;
     public DoctorList.DoctorItem mDoctorItem;
@@ -55,9 +56,9 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     public SharedPreferences mDoctorListSP;
     public SharedPreferences.Editor mDoctorListEditor;
     public SharedPreferences mFavHpKsSP;
-    public SharedPreferences.Editor  mFavHpKsEditor;
+    public SharedPreferences.Editor mFavHpKsEditor;
     public SharedPreferences mLoginInfoSP;
-    public SharedPreferences.Editor  mLoginInfoEditor;
+    public SharedPreferences.Editor mLoginInfoEditor;
 
     PowerManager.WakeLock wakeLock = null;
     @Override
@@ -170,29 +171,25 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginFragm
     }
 
     @Override
-    public void onLoginSuccess(String name, String IDCard, String patient)
+    public void onLoginSuccess(String name, String IDCard, String patient, String patientMedicareIDCard)
     {
         // save login info to SP
         String name2IDCard = name + "," + IDCard;
-        boolean isExist = false;
         Set<String> name2IDCardSet = mLoginInfoSP.getStringSet("login_info", new HashSet<String>());
-        for (String str : name2IDCardSet) {
-            if (name.equals(str.split(",")[0])) {
-                isExist = true;
-            }
-        }
-        if (!isExist) {
+        if (!name2IDCardSet.contains(name2IDCard)) {
             name2IDCardSet.add(name2IDCard);
             mLoginInfoEditor.putStringSet("login_info", name2IDCardSet);
         }
 
-        Set<String> patientsSet = mLoginInfoSP.getStringSet("patients", new HashSet<String>());
-        if (!patientsSet.contains(patient)) {
-            patientsSet.add(patient);
-            mLoginInfoEditor.putStringSet("patients", patientsSet);
+        Set<String> patientsSet = mLoginInfoSP.getStringSet("patient2MedicareIDCard", new HashSet<String>());
+        String patient2IDCard = patient + "," + patientMedicareIDCard;
+        if (!patientsSet.contains(patient2IDCard)) {
+            patientsSet.add(patient2IDCard);
+            mLoginInfoEditor.putStringSet("patient2MedicareIDCard", patientsSet);
         }
         mLoginInfoEditor.commit();
         mPatient = patient;
+        mPatientMedicareIDCard = patientMedicareIDCard;
 
         if (mHospitalFragment == null)
         {
